@@ -1,0 +1,37 @@
+name:                waiter
+version:             0.1.0.0
+github:              "caneroj1/waiter"
+license:             BSD3
+author:              "Joe Canero"
+maintainer:          "jmc41493@gmail.com"
+copyright:           "Copyright (c) 2017 Joe Canero"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            Command-tool to quickly start up a web server to serve files from any directory.
+category:            web
+
+description:         Please see the README on Github at <https://github.com/caneroj1/waiter#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- data-default-class
+- optparse-applicative
+- scotty
+- wai
+- wai-cors
+- wai-extra
+- wai-middleware-static
+- warp
+
+executables:
+  waiter:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -O2
