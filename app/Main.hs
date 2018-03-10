@@ -9,7 +9,7 @@ import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Network.Wai.Middleware.RequestLogger
 import           Network.Wai.Middleware.Static
-import           Options.Applicative
+import           Options.Applicative                  hiding ((<|>))
 import qualified Web.Scotty                           as Scotty
 
 main :: IO ()
@@ -23,9 +23,17 @@ startServer cfg@Cfg{..} = do
     forM_ (buildMiddleware cfg) Scotty.middleware
 
 buildMiddleware :: ServerConfig -> [Middleware]
-buildMiddleware Cfg{..}
-  | loggingDisabled = [staticPolicy (addBase root)]
-  | otherwise       = [logStdout, staticPolicy (addBase root)]
+buildMiddleware cfg@Cfg{..}
+  | loggingDisabled = [staticPolicy $ buildPolicy cfg]
+  | otherwise       = [logStdout, staticPolicy $ buildPolicy cfg]
+
+buildPolicy :: ServerConfig -> Policy
+buildPolicy Cfg{..} = addBase root <> policy indexPolicy
+  where indexPolicy path
+          | path == root        = Just indexFile
+          | path == root ++ "/" = Just indexFile
+          | otherwise           = Just path
+        indexFile = root ++ "/index.html"
 
 data ServerConfig = Cfg {
     root            :: String
