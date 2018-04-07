@@ -7,6 +7,7 @@ import           Data.Default.Class
 import           Data.Monoid
 import           Network.Wai
 import           Network.Wai.Handler.Warp
+import           Network.Wai.Middleware.Cors
 import           Network.Wai.Middleware.RequestLogger
 import           Network.Wai.Middleware.Static
 import           Options.Applicative                  hiding ((<|>))
@@ -24,8 +25,8 @@ startServer cfg@Cfg{..} = do
 
 buildMiddleware :: ServerConfig -> [Middleware]
 buildMiddleware cfg@Cfg{..}
-  | loggingDisabled = [staticPolicy $ buildPolicy cfg]
-  | otherwise       = [logStdout, staticPolicy $ buildPolicy cfg]
+  | loggingDisabled = [simpleCors, staticPolicy $ buildPolicy cfg]
+  | otherwise       = [simpleCors, logStdout, staticPolicy $ buildPolicy cfg]
 
 buildPolicy :: ServerConfig -> Policy
 buildPolicy Cfg{..} = addBase root <> policy indexPolicy
